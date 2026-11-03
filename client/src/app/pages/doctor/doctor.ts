@@ -195,10 +195,15 @@ export class Doctor {
     this.form.controls.items.clear();
     this.form.controls.items.push(this.fb.nonNullable.control('', [Validators.required]));
     this.form.controls.branchId.setValue(branchId);
-
-    // The number we just used is now taken: clear it before the suggestion arrives so an
-    // immediate second submit cannot resend it and get "already exists".
-    this.form.controls.number.setValue('');
-    this.refreshNextNumber();
-  }
++
++    // After clearing the form we want it to appear pristine again – otherwise the required
++    // validation messages (e.g. "Patient initials are required…") show immediately after a
++    // successful submit. Mark the form untouched so errors are only shown after the user interacts.
++    this.form.markAsUntouched();
+ 
+     // The number we just used is now taken: clear it before the suggestion arrives so an
+     // immediate second submit cannot resend it and get "already exists".
+     this.form.controls.number.setValue('');
+     this.refreshNextNumber();
+   }
 }

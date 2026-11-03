@@ -4,7 +4,8 @@ import { ToastKind, ToastService } from '../core/toast.service';
 @Component({
   selector: 'app-toast-host',
   template: `
-    <div class="pointer-events-none fixed inset-x-0 top-16 z-50 flex flex-col items-center gap-2 px-4">
+    <div class="pointer-events-none fixed top-4 right-4 z-50 flex flex-col items-start gap-2 max-w-xs">
+
       @for (toast of toasts(); track toast.id) {
         <div
           class="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border px-4 py-3 text-sm shadow-xl"
