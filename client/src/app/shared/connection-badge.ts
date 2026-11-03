@@ -10,7 +10,7 @@ import { HubConnectionState } from '@microsoft/signalr';
       [class]="style().box"
       [attr.title]="'SignalR connection: ' + label()"
     >
-      <span class="h-2 w-2 rounded-full" [class]="style().dot"></span>
+      <span class="h-2 w-2 rounded-full align-middle" [class]="style().dot"></span>
       {{ label() }}
     </span>
   `,
