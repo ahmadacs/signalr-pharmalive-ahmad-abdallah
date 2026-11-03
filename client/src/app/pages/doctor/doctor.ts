@@ -41,7 +41,6 @@ export class Doctor {
   });
 
   protected readonly submitting = signal(false);
-  protected readonly success = signal<string | null>(null);
   protected readonly requestError = signal<string | null>(null);
   private readonly serverErrors = signal<Record<string, string[]>>({});
 
@@ -120,7 +119,7 @@ export class Doctor {
     }
 
     this.submitting.set(true);
-    this.success.set(null);
+
     this.requestError.set(null);
     this.serverErrors.set({});
 
@@ -135,8 +134,9 @@ export class Doctor {
       .subscribe({
         next: (prescription) => {
           this.submitting.set(false);
-          this.success.set(
+          this.toasts.show(
             `${prescription.number} created for ${prescription.patientInitials} in ${prescription.branchId}.`,
+            'success',
           );
           this.resetForm(prescription.branchId);
         },

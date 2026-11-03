@@ -39,7 +39,7 @@
         [class.border-rose-400]="controlError('number')"
       />
       @if (controlError('number'); as message) {
-        <p class="mt-1 text-xs font-medium text-rose-600">{{ message }}</p>
+        <p class="mt-1 text-xs font-medium text-rose-600"></p>
       }
 
       <label class="mt-4 block text-sm font-medium text-slate-700" for="branchId">Branch</label>
@@ -54,7 +54,7 @@
         }
       </select>
       @if (controlError('branchId'); as message) {
-        <p class="mt-1 text-xs font-medium text-rose-600">{{ message }}</p>
+        <p class="mt-1 text-xs font-medium text-rose-600"></p>
       }
 
       <label class="mt-4 block text-sm font-medium text-slate-700" for="patientInitials">
@@ -70,7 +70,7 @@
         [class.border-rose-400]="controlError('patientInitials')"
       />
       @if (controlError('patientInitials'); as message) {
-        <p class="mt-1 text-xs font-medium text-rose-600">{{ message }}</p>
+        <p class="mt-1 text-xs font-medium text-rose-600"></p>
       }
 
       <div class="mt-4 flex items-center justify-between">
@@ -106,20 +106,19 @@
               </button>
             </div>
             @if (itemError($index); as message) {
-              <p class="mt-1 text-xs font-medium text-rose-600">{{ message }}</p>
+              <p class="mt-1 text-xs font-medium text-rose-600"></p>
             }
           </div>
         }
       </div>
       @if (itemsError(); as message) {
-        <p class="mt-1 text-xs font-medium text-rose-600">{{ message }}</p>
+        <p class="mt-1 text-xs font-medium text-rose-600"></p>
       }
 
-      @if (success(); as message) {
-        <p class="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700">
-          {{ message }}
-        </p>
-      }
+
+
+          
+
       @if (requestError(); as message) {
         <p class="mt-4 rounded-xl bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700">
           {{ message }}
