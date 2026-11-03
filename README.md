@@ -23,6 +23,12 @@ Tailwind CSS 4 · in-memory thread-safe store · xUnit + `WebApplicationFactory`
 | --- | --- |
 | ![Invalid transition](docs/screenshots/06-invalid-transition.jpg) | ![Login](docs/screenshots/01-login.jpg) |
 
+| New seed branches (Ramallah, Nablus, Hebron) |
+| --- |
+| ![Login (Ramallah)](docs/screenshots/login-ramallah.png) |
+| ![Doctor (Ramallah)](docs/screenshots/doctor-ramallah.png) |
+
+
 ---
 
 ## Run it
@@ -61,8 +67,8 @@ changes.
 | `omar` | Pharmacist | `/pharmacist` |
 | `display` | Display | `/display` |
 
-Branches: `AMM-01` Amman, `IRB-01` Irbid, `ZAR-01` Zarqa. The board and the doctor form
-default to `AMM-01`.
+Branches: `RAM-01` Ramallah, `NAB-01` Nablus, `HEB-01` Hebron. The board and the doctor form
+default to `RAM-01`.
 
 **Tests**
 
@@ -141,7 +147,7 @@ uses `WebApplicationFactory<Program>` and the real **.NET SignalR client**:
 - asserts exactly one success, one `HubException`, and that the loser's message contains the
   prescription number, "already claimed by" and the winner's name.
 
-The suite also proves branch isolation (an IRB-01 subscriber never receives an AMM-01 event), the
+The suite also proves branch isolation (an NAB-01 subscriber never receives a RAM-01 event), the
 readable invalid-transition error, and the unknown-branch error — 4 tests, all green.
 
 ---
@@ -171,7 +177,7 @@ browser history, `Referer` headers, crash dumps, and screenshots. Mitigations us
 ### 2. Why rejoin groups after a reconnect? When does stateful reconnect help?
 
 SignalR groups are keyed by **connection id** on the server:
-`Groups.AddToGroupAsync(Context.ConnectionId, "branch:AMM-01")`. A reconnect that produces a new
+`Groups.AddToGroupAsync(Context.ConnectionId, "branch:RAM-01")`. A reconnect that produces a new
 connection id creates a connection with no groups, so branch broadcasts stop arriving. The client
 therefore keeps the set of joined branches and, on `reconnected$`, invokes `JoinBranch` again
 (`PharmacyHubService.rejoinAll`). It also refetches the queue over HTTP, because events emitted while

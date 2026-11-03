@@ -57,13 +57,13 @@ public sealed class PharmacyHubTests
         });
 
         await amman.InvokeAsync("JoinBranch", "AMM-01");
-        await irbid.InvokeAsync("JoinBranch", "IRB-01");
+        await nabij.InvokeAsync("JoinBranch", "NAB-01");
 
-        var created = await TestApi.CreatePrescriptionAsync(http, doctorToken, "RX-9002", "AMM-01");
+        var created = await TestApi.CreatePrescriptionAsync(http, doctorToken, "RX-9002", "NAB-01");
 
         var received = await ammanReceived.Task.WaitAsync(TimeSpan.FromSeconds(10));
         Assert.Equal(created.Id, received.Id);
-        Assert.Equal("AMM-01", received.BranchId);
+        Assert.Equal("NAB-01", received.BranchId);
 
         // Give Irbid a moment: it must never see an Amman prescription.
         await Task.Delay(500);
@@ -99,7 +99,7 @@ public sealed class PharmacyHubTests
             sara.InvokeAsync("JoinBranch", "XYZ-99"));
 
         Assert.Contains("Branch 'XYZ-99' does not exist.", error.Message);
-        Assert.Contains("AMM-01", error.Message);
+        Assert.Contains("NAB-01", error.Message);
     }
 
     private static async Task<ClaimAttempt> TryClaimAsync(HubConnection connection, string prescriptionId)

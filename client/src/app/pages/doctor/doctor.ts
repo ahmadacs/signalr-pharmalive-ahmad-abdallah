@@ -35,7 +35,7 @@ export class Doctor {
 
   protected readonly form = this.fb.nonNullable.group({
     number: ['', [Validators.required]],
-    branchId: ['AMM-01', [Validators.required]],
+    branchId: ['RAM-01', [Validators.required]],
     patientInitials: ['', [Validators.required]],
     items: this.fb.nonNullable.array([this.fb.nonNullable.control('', [Validators.required])]),
   });
