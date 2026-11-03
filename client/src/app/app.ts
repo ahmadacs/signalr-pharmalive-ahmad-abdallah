@@ -4,10 +4,11 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from './core/auth.service';
 import { PharmacyHubService } from './core/signalr/pharmacy-hub.service';
 import { ConnectionBadge } from './shared/connection-badge';
+import { ToastHost } from './shared/toast-host';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConnectionBadge],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ConnectionBadge, ToastHost],
   templateUrl: './app.html',
 })
 export class App {
