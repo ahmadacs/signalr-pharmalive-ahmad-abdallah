@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { HubConnectionState } from '@microsoft/signalr';
 import { map, switchMap, timer } from 'rxjs';
 import { fromBranch, trackBranch } from '../../core/live-queue';
 import { Branch, Prescription } from '../../core/models';
@@ -105,7 +106,7 @@ export class DisplayScreen {
       });
 
     this.destroyRef.onDestroy(() => {
-      if (this.activeBranch) {
+      if (this.activeBranch && this.hub.state() === HubConnectionState.Connected) {
         this.hub.leaveBranch(this.activeBranch).subscribe({ error: () => undefined });
       }
     });

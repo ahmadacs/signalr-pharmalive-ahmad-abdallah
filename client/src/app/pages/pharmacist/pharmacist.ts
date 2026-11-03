@@ -102,8 +102,10 @@ export class PharmacistBoard {
       });
 
     // Do not leave a stale presence entry behind when the pharmacist leaves the page.
+    // Only while connected: a leave queued during an outage would fire after the next login
+    // and remove the branch the new session just joined.
     this.destroyRef.onDestroy(() => {
-      if (this.activeBranch) {
+      if (this.activeBranch && this.hub.state() === HubConnectionState.Connected) {
         this.hub.leaveBranch(this.activeBranch).subscribe({ error: () => undefined });
       }
     });
