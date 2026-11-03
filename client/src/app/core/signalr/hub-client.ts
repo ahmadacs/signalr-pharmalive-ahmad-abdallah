@@ -11,10 +11,14 @@ import {
   Observable,
   catchError,
   defer,
+  filter,
   from,
+  map,
   of,
   retry,
   Subject,
+  switchMap,
+  take,
   tap,
   throwError,
   timer,
@@ -115,25 +119,47 @@ export abstract class HubClient {
 
   /** Client -> server call that waits for the hub method's return value (or HubException). */
   protected invoke<T = void>(methodName: string, ...args: unknown[]): Observable<T> {
-    return defer(() => from(this.connection.invoke<T>(methodName, ...args)));
+    return this.whenConnected().pipe(
+      switchMap(() => defer(() => from(this.connection.invoke<T>(methodName, ...args)))),
+    );
   }
 
   /** Client -> server call without waiting for the server to finish. */
   protected send(methodName: string, ...args: unknown[]): Observable<void> {
-    return defer(() => from(this.connection.send(methodName, ...args)));
+    return this.whenConnected().pipe(
+      switchMap(() => defer(() => from(this.connection.send(methodName, ...args)))),
+    );
   }
 
   /** Server -> client stream (IAsyncEnumerable on the server). Unsubscribing cancels it. */
   protected stream<T>(methodName: string, ...args: unknown[]): Observable<T> {
-    return new Observable<T>((subscriber) => {
-      const subscription = this.connection.stream<T>(methodName, ...args).subscribe({
-        next: (value) => subscriber.next(value),
-        error: (error) => subscriber.error(error),
-        complete: () => subscriber.complete(),
-      });
+    return this.whenConnected().pipe(
+      switchMap(
+        () =>
+          new Observable<T>((subscriber) => {
+            const subscription = this.connection.stream<T>(methodName, ...args).subscribe({
+              next: (value) => subscriber.next(value),
+              error: (error) => subscriber.error(error),
+              complete: () => subscriber.complete(),
+            });
 
-      return () => subscription.dispose();
-    });
+            return () => subscription.dispose();
+          }),
+      ),
+    );
+  }
+
+  /**
+   * Blocks until the connection is usable. A page reload mounts components before
+   * start() has finished, so an unguarded invoke would fail with
+   * "Cannot send data if the connection is not in the 'Connected' State."
+   */
+  private whenConnected(): Observable<void> {
+    return this.state$.pipe(
+      filter((state) => state === HubConnectionState.Connected),
+      take(1),
+      map(() => void 0),
+    );
   }
 }
 

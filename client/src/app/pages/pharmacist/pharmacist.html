@@ -1,0 +1,173 @@
+<section class="mx-auto max-w-[1700px] px-4 py-6">
+  <header class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">Pharmacist board</p>
+      <h1 class="mt-1 text-2xl font-bold text-slate-900">{{ branchName() }}</h1>
+      <p class="text-sm text-slate-500">
+        Live queue for <span class="font-mono">{{ branchId() }}</span> — no refresh needed.
+      </p>
+    </div>
+
+    <label class="flex items-center gap-2 text-sm">
+      <span class="font-medium text-slate-500">Branch</span>
+      <select
+        class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+        [value]="branchId()"
+        (change)="setBranch($any($event.target).value)"
+      >
+        @for (branch of branches(); track branch.id) {
+          <option [value]="branch.id">{{ branch.id }} — {{ branch.name }}</option>
+        }
+      </select>
+    </label>
+  </header>
+
+  <!-- Live stats (server -> client stream, every 2s) -->
+  <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+    @if (stats(); as s) {
+      <div class="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3">
+        <p class="text-[11px] font-semibold uppercase text-sky-700">New</p>
+        <p class="text-2xl font-bold text-sky-900">{{ s.new }}</p>
+      </div>
+      <div class="rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3">
+        <p class="text-[11px] font-semibold uppercase text-violet-700">Claimed</p>
+        <p class="text-2xl font-bold text-violet-900">{{ s.claimed }}</p>
+      </div>
+      <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3">
+        <p class="text-[11px] font-semibold uppercase text-amber-700">Preparing</p>
+        <p class="text-2xl font-bold text-amber-900">{{ s.preparing }}</p>
+      </div>
+      <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+        <p class="text-[11px] font-semibold uppercase text-emerald-700">Ready</p>
+        <p class="text-2xl font-bold text-emerald-900">{{ s.ready }}</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+        <p class="text-[11px] font-semibold uppercase text-slate-500">Total</p>
+        <p class="text-2xl font-bold text-slate-900">{{ s.total }}</p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+        <p class="text-[11px] font-semibold uppercase text-slate-500">Avg. prep</p>
+        <p class="text-2xl font-bold text-slate-900">{{ formatSeconds(s.averagePreparationSeconds) }}</p>
+      </div>
+    } @else {
+      <div class="col-span-2 h-[74px] animate-pulse rounded-2xl bg-slate-200/60 sm:col-span-3 lg:col-span-6"></div>
+    }
+  </div>
+
+  <!-- Presence: one chip per pharmacist, multiple tabs collapse into one person -->
+  <div class="mt-4 flex flex-wrap items-center gap-2">
+    <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">Online</span>
+    @for (name of pharmacists(); track name) {
+      <span
+        class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700"
+      >
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+        {{ name }}
+        @if (name === userName()) {
+          <span class="text-slate-400">(you)</span>
+        }
+      </span>
+    } @empty {
+      <span class="text-xs text-slate-400">Nobody else in this branch.</span>
+    }
+  </div>
+
+  @if (boardError(); as message) {
+    <p class="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">
+      {{ message }}
+    </p>
+  }
+
+  <!-- Kanban: one column per status -->
+  <div class="scroll-slim mt-5 flex gap-3 overflow-x-auto pb-6">
+    @for (column of columns(); track column.status) {
+      <div class="flex w-64 shrink-0 flex-col rounded-2xl bg-slate-100/80 p-2">
+        <div class="flex items-center justify-between px-2 py-1.5">
+          <span class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+            <span class="h-2 w-2 rounded-full" [class]="statusDot(column.status)"></span>
+            {{ column.status }}
+          </span>
+          <span class="rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-slate-500">
+            {{ column.items.length }}
+          </span>
+        </div>
+
+        <div class="mt-1 flex-1 space-y-2">
+          @for (prescription of column.items; track prescription.id) {
+            <article class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-mono text-sm font-bold text-slate-900">{{ prescription.number }}</span>
+                <span class="text-[11px] text-slate-400">{{ prescription.createdAt | date: 'HH:mm' }}</span>
+              </div>
+
+              <p class="mt-1 text-sm font-semibold text-slate-700">
+                {{ prescription.patientInitials }}
+              </p>
+              <p class="truncate text-xs text-slate-500" [title]="prescription.items.join(', ')">
+                {{ prescription.items.join(', ') }}
+              </p>
+              <p class="mt-1 text-[11px] text-slate-400">by {{ prescription.createdBy }}</p>
+
+              @if (prescription.claimedBy) {
+                <p class="mt-2 text-[11px] font-medium" [class]="isMine(prescription) ? 'text-emerald-700' : 'text-amber-700'">
+                  {{ isMine(prescription) ? 'Claimed by you' : 'Claimed by ' + prescription.claimedBy }}
+                </p>
+              }
+
+              @if (errorFor(prescription); as message) {
+                <p class="mt-2 rounded-lg bg-rose-50 px-2 py-1 text-[11px] font-medium leading-snug text-rose-700">
+                  {{ message }}
+                </p>
+              }
+
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                @if (prescription.status === 'New') {
+                  <button
+                    type="button"
+                    class="rounded-lg bg-emerald-600 px-2.5 py-1 text-[11px] font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    [disabled]="isPending(prescription) || !isConnected()"
+                    (click)="claim(prescription)"
+                  >
+                    Claim
+                  </button>
+                }
+
+                @if (canMove(prescription)) {
+                  @for (status of nextStatuses(prescription); track status) {
+                    <button
+                      type="button"
+                      class="rounded-lg bg-slate-900 px-2.5 py-1 text-[11px] font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      [disabled]="isPending(prescription) || !isConnected()"
+                      (click)="move(prescription, status)"
+                    >
+                      {{ moveLabel(status) }}
+                    </button>
+                  }
+                }
+
+                @if (canReject(prescription)) {
+                  <button
+                    type="button"
+                    class="rounded-lg border border-rose-200 px-2.5 py-1 text-[11px] font-semibold text-rose-600 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    [disabled]="isPending(prescription) || !isConnected()"
+                    (click)="move(prescription, 'Rejected')"
+                  >
+                    Reject
+                  </button>
+                }
+              </div>
+
+              @if (!isConnected()) {
+                <p class="mt-2 text-[11px] text-slate-400">Actions disabled while disconnected.</p>
+              }
+            </article>
+          } @empty {
+            <p class="rounded-xl border border-dashed border-slate-300 px-3 py-6 text-center text-xs text-slate-400">
+              Empty
+            </p>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</section>
