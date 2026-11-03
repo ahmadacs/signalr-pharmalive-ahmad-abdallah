@@ -13,20 +13,20 @@ Tailwind CSS 4 · in-memory thread-safe store · xUnit + `WebApplicationFactory`
 
 | Pharmacist board (live Kanban) | Claim race — the loser sees a readable error |
 | --- | --- |
-| ![Pharmacist board](docs/screenshots/02-pharmacist-board.jpg) | ![Claim race](docs/screenshots/03-claim-race.jpg) |
+| ![Pharmacist board](docs/screenshots/02-pharmacist-board.png) | ![Claim race](docs/screenshots/03-claim-race.png) |
 
 | Doctor workspace + private Ready toast | Waiting-room display |
 | --- | --- |
-| ![Doctor workspace](docs/screenshots/04-doctor-notified.jpg) | ![Waiting room](docs/screenshots/05-waiting-room.jpg) |
+| ![Doctor workspace](docs/screenshots/04-doctor-notified.png) | ![Waiting room](docs/screenshots/05-waiting-room.png) |
 
 | Invalid transition is reported next to the card | Dev login |
 | --- | --- |
-| ![Invalid transition](docs/screenshots/06-invalid-transition.jpg) | ![Login](docs/screenshots/01-login.jpg) |
+| ![Invalid transition](docs/screenshots/06-invalid-transition.png) | ![Login](docs/screenshots/01-login.png) |
 
 | New seed branches (Ramallah, Nablus, Hebron) |
 | --- |
-| ![Login (Ramallah)](docs/screenshots/login-ramallah.png) |
-| ![Doctor (Ramallah)](docs/screenshots/doctor-ramallah.png) |
+| ![Login (Ramallah)](docs/screenshots/01-login.png) |
+| ![Doctor (Ramallah)](docs/screenshots/04-doctor-notified.png) |
 
 
 ---
