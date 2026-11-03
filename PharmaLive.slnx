@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/server/">
+    <Project Path="server/PharmaLive.Api.Tests/PharmaLive.Api.Tests.csproj" />
+    <Project Path="server/PharmaLive.Api/PharmaLive.Api.csproj" />
+  </Folder>
+</Solution>
