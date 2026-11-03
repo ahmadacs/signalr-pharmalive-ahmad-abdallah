@@ -13,7 +13,7 @@ import { ToastKind, ToastService } from '../core/toast.service';
           role="status"
         >
           <span class="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-current"></span>
-          <p class="flex-1 leading-snug">{{ toast.message }}</p>
+          <p class="flex-1 leading-snug text-center">{{ toast.message }}</p>
           <button
             type="button"
             class="text-current/60 transition hover:text-current"
