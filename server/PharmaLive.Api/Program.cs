@@ -87,11 +87,11 @@ app.UseCors("client");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("/", () => Results.Ok(new
+app.MapGet("/", (BranchCatalog branches) => Results.Ok(new
 {
     service = "PharmaLive.Api",
     hub = "/hubs/pharmacy",
-    branches = new[] { "RAM-01", "NAB-01", "HEB-01" },
+    branches = branches.All.Select(branch => branch.Id),
 }));
 
 app.MapAuthEndpoints();

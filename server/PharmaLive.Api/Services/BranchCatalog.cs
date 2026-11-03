@@ -7,9 +7,9 @@ public sealed class BranchCatalog
 {
     private static readonly BranchDto[] Branches =
     [
-        new("RAM-01", "Ramallah"),
-        new("NAB-01", "Nablus"),
-        new("HEB-01", "Hebron"),
+        new("AMM-01", "Amman"),
+        new("IRB-01", "Irbid"),
+        new("ZAR-01", "Zarqa"),
     ];
 
     private readonly Dictionary<string, BranchDto> _byId =

@@ -38,7 +38,7 @@ export class PharmacistBoard {
   protected readonly branches = toSignal(this.http.branches(), {
     initialValue: [] as Branch[],
   });
-  protected readonly branchId = signal('RAM-01');
+  protected readonly branchId = signal('AMM-01');
   protected readonly branchName = computed(
     () => this.branches().find((branch) => branch.id === this.branchId())?.name ?? this.branchId(),
   );

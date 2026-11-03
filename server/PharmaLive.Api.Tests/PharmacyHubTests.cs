@@ -39,35 +39,35 @@ public sealed class PharmacyHubTests
 
         var doctorToken = await TestApi.LoginAsync(http, "dr.khaled", "Doctor");
 
-        await using var ramallah = await TestApi.ConnectAsync(factory, await TestApi.LoginAsync(http, "sara", "Pharmacist"));
-        await using var nablus = await TestApi.ConnectAsync(factory, await TestApi.LoginAsync(http, "omar", "Pharmacist"));
+        await using var amman = await TestApi.ConnectAsync(factory, await TestApi.LoginAsync(http, "sara", "Pharmacist"));
+        await using var irbid = await TestApi.ConnectAsync(factory, await TestApi.LoginAsync(http, "omar", "Pharmacist"));
 
-        var ramallahReceived = new TaskCompletionSource<PrescriptionDto>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var nablusReceived = new TaskCompletionSource<PrescriptionDto>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var ammanReceived = new TaskCompletionSource<PrescriptionDto>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var irbidReceived = new TaskCompletionSource<PrescriptionDto>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        ramallah.On<PrescriptionDto>("PrescriptionCreated", dto =>
+        amman.On<PrescriptionDto>("PrescriptionCreated", dto =>
         {
-            ramallahReceived.TrySetResult(dto);
+            ammanReceived.TrySetResult(dto);
             return Task.CompletedTask;
         });
-        nablus.On<PrescriptionDto>("PrescriptionCreated", dto =>
+        irbid.On<PrescriptionDto>("PrescriptionCreated", dto =>
         {
-            nablusReceived.TrySetResult(dto);
+            irbidReceived.TrySetResult(dto);
             return Task.CompletedTask;
         });
 
-        await ramallah.InvokeAsync("JoinBranch", "RAM-01");
-        await nablus.InvokeAsync("JoinBranch", "NAB-01");
+        await amman.InvokeAsync("JoinBranch", "AMM-01");
+        await irbid.InvokeAsync("JoinBranch", "IRB-01");
 
-        var created = await TestApi.CreatePrescriptionAsync(http, doctorToken, "RX-9002", "RAM-01");
+        var created = await TestApi.CreatePrescriptionAsync(http, doctorToken, "RX-9002", "AMM-01");
 
-        var received = await ramallahReceived.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        var received = await ammanReceived.Task.WaitAsync(TimeSpan.FromSeconds(10));
         Assert.Equal(created.Id, received.Id);
-        Assert.Equal("RAM-01", received.BranchId);
+        Assert.Equal("AMM-01", received.BranchId);
 
-        // Give Nablus a moment: it must never see a Ramallah prescription.
+        // Give Irbid a moment: it must never see an Amman prescription.
         await Task.Delay(500);
-        Assert.False(nablusReceived.Task.IsCompleted);
+        Assert.False(irbidReceived.Task.IsCompleted);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public sealed class PharmacyHubTests
             sara.InvokeAsync("JoinBranch", "XYZ-99"));
 
         Assert.Contains("Branch 'XYZ-99' does not exist.", error.Message);
-        Assert.Contains("RAM-01", error.Message);
+        Assert.Contains("AMM-01", error.Message);
     }
 
     private static async Task<ClaimAttempt> TryClaimAsync(HubConnection connection, string prescriptionId)

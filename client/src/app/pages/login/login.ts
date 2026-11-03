@@ -28,8 +28,8 @@ export class Login {
 
   protected readonly demoUsers: DemoUser[] = [
     { userName: 'dr.khaled', role: 'Doctor', hint: 'creates prescriptions' },
-    { userName: 'sara', role: 'Pharmacist', hint: 'RAM-01 queue' },
-    { userName: 'omar', role: 'Pharmacist', hint: 'RAM-01 queue' },
+    { userName: 'sara', role: 'Pharmacist', hint: 'AMM-01 queue' },
+    { userName: 'omar', role: 'Pharmacist', hint: 'AMM-01 queue' },
     { userName: 'display', role: 'Display', hint: 'waiting-room screen' },
   ];
 

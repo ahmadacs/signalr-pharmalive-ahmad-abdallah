@@ -30,7 +30,7 @@ internal static class TestApi
         HttpClient http,
         string accessToken,
         string number,
-        string branchId = "RAM-01")
+        string branchId = "AMM-01")
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, "/api/prescriptions")
         {

@@ -61,7 +61,8 @@ changes.
 | `omar` | Pharmacist | `/pharmacist` |
 | `display` | Display | `/display` |
 
-Branches: `RAM-01` Ramallah, `NAB-01` Nablus, `HEB-01` Hebron.
+Branches: `AMM-01` Amman, `IRB-01` Irbid, `ZAR-01` Zarqa. The board and the doctor form
+default to `AMM-01`.
 
 **Tests**
 
@@ -140,7 +141,7 @@ uses `WebApplicationFactory<Program>` and the real **.NET SignalR client**:
 - asserts exactly one success, one `HubException`, and that the loser's message contains the
   prescription number, "already claimed by" and the winner's name.
 
-The suite also proves branch isolation (a NAB-01 subscriber never receives a RAM-01 event), the
+The suite also proves branch isolation (an IRB-01 subscriber never receives an AMM-01 event), the
 readable invalid-transition error, and the unknown-branch error — 4 tests, all green.
 
 ---
@@ -170,7 +171,7 @@ browser history, `Referer` headers, crash dumps, and screenshots. Mitigations us
 ### 2. Why rejoin groups after a reconnect? When does stateful reconnect help?
 
 SignalR groups are keyed by **connection id** on the server:
-`Groups.AddToGroupAsync(Context.ConnectionId, "branch:RAM-01")`. A reconnect that produces a new
+`Groups.AddToGroupAsync(Context.ConnectionId, "branch:AMM-01")`. A reconnect that produces a new
 connection id creates a connection with no groups, so branch broadcasts stop arriving. The client
 therefore keeps the set of joined branches and, on `reconnected$`, invokes `JoinBranch` again
 (`PharmacyHubService.rejoinAll`). It also refetches the queue over HTTP, because events emitted while
@@ -257,25 +258,6 @@ explicit synchronization.
     origins (and `AllowCredentials` stays required for SignalR).
 11. **Observability** — add the instance id to logs/metrics so "which node handled it?" is answerable;
     the current hub filter logs user and duration but not the instance.
-
----
-
-## Five-minute demo script
-
-1. Window 1: sign in as **dr.khaled** (Doctor). Windows 2 and 3: **sara** and **omar** (Pharmacist) —
-   both default to `RAM-01`. The board shows presence (`sara`, `omar`) and live stats.
-2. In window 1, create `RX-1024` for `RAM-01`. It appears in the **New** column of both boards
-   immediately; the doctor's "Live status" list shows it too.
-3. Click **Claim** in windows 2 and 3 at almost the same time. One card becomes "Claimed by you"; the
-   other shows *"Prescription RX-1024 is already claimed by sara."* right on the card.
-4. The winner moves it **Preparing → Ready**. The doctor gets a toast *"RX-1024 is ready — A.K."* and
-   the display screen (`/display/RAM-01`) shows the number in large type.
-5. (Optional) With a stale card, ask for an invalid move — the server answers
-   *"Cannot move RX-1024 from Ready to Preparing."* next to the card.
-6. Stop the API for ~10 seconds and start it again: badges go **Reconnecting → Connected**, presence
-   and stats return, and a new prescription still appears (the group was rejoined and the board
-   resynced).
-7. A pharmacist on `NAB-01` never sees `RAM-01` prescriptions. Switch the branch selector to show it.
 
 ---
 
